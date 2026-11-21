@@ -11,33 +11,24 @@ let v=new Set([a]),s=[[a,'']];
 while(s.length){let[c,m]=s.pop();if(c==b)return m;for(let k=0;k<4;k++){let n=c+O[k];if(pa(n)&&!bl.includes(n)&&!v.has(n)){v.add(n);s.push([n,m+'udlr'[k]])}}}
 return null};
 const room=(F,b0,g0,s)=>{
-let D=new Int16Array(W*H).fill(-1),q=[...g0];
-for(let g of g0)D[g]=0;
-for(let i=0;i<q.length;i++)for(let k=0;k<4;k++){let x=q[i]+O[k];if(F[x]&&D[x]<0){D[x]=D[q[i]]+1;q.push(x)}}
-let h=b=>{let s=0;for(let x of b)s+=D[x];return s};
 let rg=(p,z)=>{let e=new Uint8Array(W*H);e[p]=1;let o=[p];for(let i=0;i<o.length;i++)for(let k=0;k<4;k++){let x=o[i]+O[k];if((F[x]||x==s)&&!z.includes(x)&&!e[x]){e[x]=1;o.push(x)}}return e};
+let dc=c=>!g0.includes(c)&&((A[c-W]&&A[c-1])||(A[c-W]&&A[c+1])||(A[c+W]&&A[c-1])||(A[c+W]&&A[c+1]));
 let key=(b,r)=>b.join()+'|'+r;
-let b0s=[...b0].sort((a,b)=>a-b),e0=rg(s,b0s),k0=key(b0s,e0.findIndex(Boolean)),nd=new Map(),Bk=[],mn=0,N=0;
-let pu=x=>{(Bk[x[0]]??=[]).push(x);if(x[0]<mn)mn=x[0];N++};
-let po=()=>{while(!Bk[mn]?.length)mn++;N--;return Bk[mn].pop()};
-let h0=h(b0s),st=[h0,h0,0,k0,b0s,s,null,null];
-nd.set(k0,st);pu(st);
-let gn=null;
-while(N>0){
-let c=po();
-if(c[2]>nd.get(c[3])[2])continue;
-if(c[4].every(x=>g0.includes(x))){gn=c;break}
-let e=rg(c[5],c[4]);
-for(let i=0;i<c[4].length;i++){let b=c[4][i];for(let k=0;k<4;k++){let o=O[k],bh=b-o,ah=b+o;
+let b0s=[...b0].sort((a,b)=>a-b),e0=rg(s,b0s),k0=key(b0s,e0.findIndex(Boolean)),nd=new Map([[k0,null]]),q=[[b0s,s,k0]],qi=0,gn=null;
+while(qi<q.length){
+let[b,p,k]=q[qi++];
+if(b.every(x=>g0.includes(x))){gn=[b,p,k];break}
+let e=rg(p,b);
+for(let i=0;i<b.length;i++){let bx=b[i];for(let j=0;j<4;j++){let o=O[j],bh=bx-o,ah=bx+o;
 if(!e[bh])continue;
-if(!F[ah]||c[4].includes(ah))continue;
-let nb=[...c[4]];nb[i]=ah;nb.sort((a,b)=>a-b);
-let ne=rg(b,nb),nk=key(nb,ne.findIndex(Boolean)),ng=c[2]+1;
-if(nd.has(nk)&&nd.get(nk)[2]<=ng)continue;
-let nh=h(nb),nn=[ng+nh,nh,ng,nk,nb,b,c[3],b*4+k];
-nd.set(nk,nn);pu(nn)}}}
+if(!F[ah]||b.includes(ah)||dc(ah))continue;
+let nb=[...b];nb[i]=ah;nb.sort((a,b)=>a-b);
+let ne=rg(bx,nb),nk=key(nb,ne.findIndex(Boolean));
+if(nd.has(nk))continue;
+nd.set(nk,[k,bx*4+j]);
+q.push([nb,bx,nk])}}}
 if(!gn)return null;
-let ps=[];for(let x=gn;x[6]!==null;x=nd.get(x[6]))ps.push(x[7]);ps.reverse();
+let ps=[];for(let x=gn[2];nd.get(x)!==null;x=nd.get(x)[0])ps.push(nd.get(x)[1]);ps.reverse();
 let pl=s,bx=[...b0s],m='';
 for(let p of ps){let b=(p/4)|0,k=p%4,o=O[k],bh=b-o;
 let w=walk(pl,bh,n=>F[n]||n==s,bx);if(w===null)return null;
